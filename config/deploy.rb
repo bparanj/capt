@@ -1,6 +1,7 @@
 # config valid for current version and patch releases of Capistrano
 lock "~> 3.18.1"
 
+server '54.188.245.219', user: 'deploy', roles: %w{app db web}, port: 2222
 set :application, "capt"
 set :repo_url, "git@github.com:bparanj/capt.git"
 set :deploy_to, '/var/www/capt'
