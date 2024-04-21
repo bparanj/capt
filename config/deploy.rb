@@ -32,8 +32,6 @@ namespace :deploy do
   end
 end
 
-# lib/capistrano/tasks/database.rake
-
 namespace :deploy do
   desc 'Create database if it does not exist'
   task :create_db do
@@ -60,6 +58,25 @@ namespace :deploy do
   before 'deploy:migrate', 'deploy:create_db'
 end
 
+namespace :deploy do
+  desc 'Print environment variables'
+  task :print_env do
+    on roles(:app) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :ruby, '-e', <<-RUBY
+            puts "Environment Variables:"
+            ENV.each do |key, value|
+              puts "#{key}: #{value}"
+            end
+          RUBY
+        end
+      end
+    end
+  end
+end
+
+after 'deploy:published', 'deploy:print_env'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
