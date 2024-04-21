@@ -58,25 +58,18 @@ namespace :deploy do
   before 'deploy:migrate', 'deploy:create_db'
 end
 
+# Capistrano task to print environment variables
 namespace :deploy do
   desc 'Print environment variables'
   task :print_env do
-    on roles(:app) do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-          execute :ruby, '-e', <<~RUBY
-            puts "Environment Variables:"
-            ENV.each do |key, value|
-              puts "#{key}: #{value}"
-            end
-          RUBY
-        end
-      end
+    on roles(:app), in: :sequence, wait: 5 do
+      execute :printenv
     end
   end
+
+  after 'deploy:published', 'deploy:print_env'
 end
 
-after 'deploy:published', 'deploy:print_env'
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
