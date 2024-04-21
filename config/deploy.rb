@@ -10,6 +10,10 @@ set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'public/uploads')
 set :keep_releases, 5
 
+set :default_env, {
+  'CAPT_DATABASE_PASSWORD' => ENV['CAPT_DATABASE_PASSWORD']
+}
+
 namespace :deploy do
   namespace :check do
     before :linked_files, :upload_config_files do
@@ -27,6 +31,35 @@ namespace :deploy do
     end
   end
 end
+
+# lib/capistrano/tasks/database.rake
+
+namespace :deploy do
+  desc 'Create database if it does not exist'
+  task :create_db do
+    on roles(:db) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rails, 'db:create'
+        end
+      end
+    end
+  end
+
+  desc 'Runs rake db:migrate if migrations are pending'
+  task :migrate do
+    on primary :db do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rails, 'db:migrate'
+        end
+      end
+    end
+  end
+
+  before 'deploy:migrate', 'deploy:create_db'
+end
+
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
