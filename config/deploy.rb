@@ -3,11 +3,30 @@ lock "~> 3.18.1"
 
 server '54.188.245.219', user: 'deploy', roles: %w{app db web}, port: 2222
 set :application, "capt"
+set :branch, 'main'
 set :repo_url, "git@github.com:bparanj/capt.git"
-set :deploy_to, '/var/www/apps/capt'
+set :deploy_to, '/home/deploy/apps/capt'
 set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/master.key')
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'public/uploads')
 set :keep_releases, 5
+
+namespace :deploy do
+  namespace :check do
+    before :linked_files, :upload_config_files do
+      on roles(:app), in: :sequence, wait: 10 do
+        # Upload master.key
+        unless test("[ -f #{shared_path}/config/master.key ]")
+          upload! 'config/master.key', "#{shared_path}/config/master.key"
+        end
+
+        # Upload database.yml
+        unless test("[ -f #{shared_path}/config/database.yml ]")
+          upload! 'config/database.yml', "#{shared_path}/config/database.yml"
+        end
+      end
+    end
+  end
+end
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
