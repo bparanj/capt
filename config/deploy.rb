@@ -4,7 +4,7 @@ lock "~> 3.18.1"
 server '54.188.245.219', user: 'deploy', roles: %w{app db web}, port: 2222
 set :application, "capt"
 set :repo_url, "git@github.com:bparanj/capt.git"
-set :deploy_to, '/var/www/capt'
+set :deploy_to, '/var/www/apps/capt'
 set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/master.key')
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'public/uploads')
 set :keep_releases, 5
