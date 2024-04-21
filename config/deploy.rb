@@ -64,7 +64,7 @@ namespace :deploy do
     on roles(:app) do
       within release_path do
         with rails_env: fetch(:rails_env) do
-          execute :ruby, '-e', <<-RUBY
+          execute :ruby, '-e', <<~RUBY
             puts "Environment Variables:"
             ENV.each do |key, value|
               puts "#{key}: #{value}"
