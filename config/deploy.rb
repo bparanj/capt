@@ -70,6 +70,11 @@ namespace :deploy do
   after 'deploy:published', 'deploy:print_env'
 end
 
+set :ssh_options, {
+  keys: %w(~/.ssh/id_ed25519), # Ensure this path is correct
+  forward_agent: true,
+  auth_methods: %w(publickey)
+}
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
