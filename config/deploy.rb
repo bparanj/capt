@@ -50,7 +50,15 @@ namespace :deploy do
   before 'deploy:migrate', 'deploy:create_db'
 end
 
-# Capistrano task to print environment variables
+namespace :puma do
+  desc 'Restart Puma'
+  task :restart do
+    on roles(:app) do
+      execute :sudo, 'systemctl restart puma.service'
+    end
+  end
+end
+
 namespace :deploy do
   desc 'Print environment variables'
   task :print_env do
@@ -58,12 +66,13 @@ namespace :deploy do
       execute :printenv
     end
   end
-
-  after 'deploy:published', 'deploy:print_env'
 end
 
+after 'deploy:published', 'puma:restart'
+after 'puma:restart', 'deploy:print_env'  # Ensures env vars are printed after Puma has restarted
+
 set :ssh_options, {
-  keys: %w(~/.ssh/id_ed25519), # Ensure this path is correct
+  keys: %w(~/.ssh/id_ed25519),
   forward_agent: true,
   auth_methods: %w(publickey)
 }

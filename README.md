@@ -1,24 +1,9 @@
-# README
+# Rails 7 Demo App
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This repo is used to show how to use HiveGrid to deploy your Rails 7 apps.
 
-Things you may want to cover:
+## Tasks
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+- Setup dot env gem and resolve database password issue
+- Test to make sure Puma is restarted by Capistrano after deploy
+- Review troubleshoot-cap.md and extract tips for the article
