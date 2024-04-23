@@ -44,17 +44,6 @@ namespace :deploy do
     end
   end
 
-  desc 'Runs rake db:migrate if migrations are pending'
-  task :migrate do
-    on primary :db do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-          execute :rails, 'db:migrate'
-        end
-      end
-    end
-  end
-
   before 'deploy:migrate', 'deploy:create_db'
 end
 
