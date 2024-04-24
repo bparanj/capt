@@ -13,9 +13,20 @@ set :linked_files, fetch(:linked_files, []).push('config/database.yml', 'config/
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'public/system', 'public/uploads')
 set :keep_releases, 5
 
-set :default_env, {
-  'CAPT_DATABASE_PASSWORD' => ENV['CAPT_DATABASE_PASSWORD']
-}
+append :linked_files, '.env.production'
+
+namespace :deploy do
+  desc 'Upload .env.production unless it exists'
+  task :upload_dotenv do
+    on roles(:app) do
+      unless test("[ -f #{shared_path}/.env.production ]")
+        upload!('.env.production', "#{shared_path}/.env.production")
+      end
+    end
+  end
+end
+
+before 'deploy:check:linked_files', 'deploy:upload_dotenv'
 
 namespace :deploy do
   namespace :check do
