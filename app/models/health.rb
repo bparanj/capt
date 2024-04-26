@@ -1,12 +1,12 @@
 class Health
   def self.database
-    ActiveRecord::Base.connected?
+    ActiveRecord::Base.connection.active?
   end
 
   def self.redis
-    Redis.current.ping == "PONG"
+    Redis.new.ping == "PONG"
+
   rescue StandardError
     false
   end
 end
-
