@@ -5,8 +5,5 @@ class Health
 
   def self.redis
     Redis.new.ping == "PONG"
-
-  rescue StandardError
-    false
   end
 end
