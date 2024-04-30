@@ -79,6 +79,15 @@ namespace :deploy do
   end
 end
 
+namespace :log do
+  desc "Tail the production log file"
+  task :tail do
+    on roles(:app) do
+      execute "tail -f #{shared_path}/log/production.log"
+    end
+  end
+end
+
 after 'deploy:published', 'puma:restart'
 after 'puma:restart', 'deploy:print_env'  # Ensures env vars are printed after Puma has restarted
 
